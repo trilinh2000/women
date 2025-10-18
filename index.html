@@ -29,9 +29,9 @@ body {
 }
 .thought-cloud {
   width:260px;
-  max-width:26vw;
+  max-width:50vw;
   height:150px;
-  max-height:15vh;
+  max-height:20vh;
   background:url("style/image/cloud.png") no-repeat center bottom;
   background-size:contain;
   display:flex;
@@ -41,16 +41,15 @@ body {
   transform: scaleX(-1);
 }
 .thought-text {
-  position:absolute;
-  top:45%;
-  left:50%;
-  transform:translate(-50%,-50%) scaleX(-1);
-  text-align:center;
+  position: relative; /* nằm trong đám mây */
+  transform: scaleX(-1);
+  text-align: center;
   font-weight:600;
   color:#ff4fa3;
-  width:80%;
+  width:90%;
+  max-width:260px;
   word-wrap: break-word;
-  font-size: clamp(16px, 4vw, 24px);
+  font-size: clamp(12px,4vw,18px);
 }
 
 #dog { width:240px; max-width:24vw; transform:scaleX(-1); }
@@ -64,6 +63,7 @@ body {
   to { transform: scaleX(-1) translateY(-10px); }
 }
 
+/* 💘 Lời chúc full màn hình */
 #message {
   position:absolute;
   top:0;
@@ -73,56 +73,40 @@ body {
   pointer-events:none;
   display:flex;
   flex-wrap: wrap;
-  justify-content:center;
-  align-items:flex-start;
-  overflow:hidden;
-  padding:5px;
-  box-sizing:border-box;
+  justify-content: center;
+  align-content: center;
 }
 
+/* ❤️ Item ảnh + chữ */
 .love-item {
-  position:relative;
+  position: relative;
   opacity:0;
   text-align:center;
-  transition: opacity 0.5s ease;
-  word-break: break-word;
+  margin:10px;
+  transition: opacity 1s ease;
   display:flex;
-  flex-direction:column;
-  align-items:center;
-  margin:5px;
-  aspect-ratio:1/1; /* đảm bảo container vuông */
+  flex-direction: column;
+  align-items: center;
 }
-
 .love-item img {
+  display:block;
   width:100%;
-  height:100%;
-  object-fit:contain;
+  height:auto;
   border-radius:10px;
 }
-
 .love-item .text {
   margin-top:5px;
   color:#ff0066;
   font-weight:600;
-  font-size: clamp(12px, 3vw, 18px);
-  word-wrap:break-word;
   text-align:center;
+  font-size: clamp(12px,3vw,18px);
+  word-wrap:break-word;
 }
 
-/* Desktop: 4 cột */
-@media(min-width:1025px){
-  .love-item { flex: 1 1 calc(25% - 10px); max-width: calc(25% - 10px); }
-}
-/* Tablet: 3 cột */
-@media(min-width:769px) and (max-width:1024px){
-  .love-item { flex: 1 1 calc(33.33% - 10px); max-width: calc(33.33% - 10px); }
-}
-/* Mobile: 2 cột */
+/* Mobile */
 @media(max-width:768px){
   .thought-cloud { width:50vw; height:20vh; }
   #dog { width:40vw; }
-  .love-item { flex: 1 1 calc(50% - 5px); max-width: calc(50% - 5px); margin:2px; }
-  .love-item .text { font-size:3vw; }
 }
 </style>
 </head>
@@ -145,6 +129,7 @@ const dogGroup = document.getElementById("dogGroup");
 const message = document.getElementById("message");
 const sound = document.getElementById("sound");
 
+// Lời chúc
 const loveTexts = [
   "💖 Gặp cậu là điều tuyệt vời nhất hôm nay!",
   "💌 Nhìn cậu thôi cũng thấy tim mình rung rinh!",
@@ -155,19 +140,23 @@ const loveTexts = [
   "💫 Nếu cậu cười, cả thế giới mình cũng muốn cười theo!"
 ];
 
+// Ảnh
 let loveImages = [
   "./style/image/chuc1.jpg",
   "./style/image/chuc2.jpg",
   "./style/image/chuc3.jpg",
   "./style/image/chuc4.jpg",
   "./style/image/chuc5.jpg",
-  "./style/image/chuc6.jpg",
+  "./style/image/chuc6.jpg"
 ];
 
 dogGroup.addEventListener("animationend", () => {
   dogGroup.style.display = "none";
   sound.currentTime = 0;
   sound.play();
+
+  // Shuffle để hiển thị ảnh ngẫu nhiên nhưng không trùng
+  loveImages = loveImages.sort(()=>Math.random()-0.5);
 
   loveImages.forEach((imgSrc,index)=>{
     setTimeout(()=>{
@@ -176,11 +165,14 @@ dogGroup.addEventListener("animationend", () => {
 
       const img = document.createElement("img");
       img.src = imgSrc;
+      const size = Math.min(100 + Math.random()*50, 200);
+      img.style.width = size + "px";
+      img.style.height = "auto";
       item.appendChild(img);
 
       const text = document.createElement("div");
       text.className="text";
-      text.innerText = loveTexts[index % loveTexts.length];
+      text.innerText = loveTexts[Math.floor(Math.random()*loveTexts.length)];
       item.appendChild(text);
 
       message.appendChild(item);
