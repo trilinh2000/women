@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gửi yêu thương 💌</title>
+<style>
+body {
+  margin:0;
+  padding:0;
+  overflow:hidden;
+  height:100vh;
+  background: linear-gradient(to bottom, #ffe4ec, #fff);
+  font-family: "Segoe UI", sans-serif;
+  color:#ff3399;
+  text-align:center;
+}
+
+/* 🐶 Chó + đám mây */
+.dog-group {
+  position:absolute;
+  top:60%;
+  left:-400px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  animation: moveAcross 8s linear forwards;
+}
+.thought-cloud {
+  width:260px;
+  max-width:26vw;
+  height:150px;
+  max-height:15vh;
+  background:url("style/image/cloud.png") no-repeat center bottom;
+  background-size:contain;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  animation: floatUp 1.5s ease-in-out infinite alternate;
+  transform: scaleX(-1);
+}
+.thought-text {
+  position:absolute;
+  top:45%;
+  left:50%;
+  transform:translate(-50%,-50%) scaleX(-1);
+  text-align:center;
+  font-weight:600;
+  color:#ff4fa3;
+  width:80%;
+  font-size: clamp(16px, 4vw, 24px);
+  word-wrap: break-word;
+}
+
+#dog { width:240px; max-width:24vw; transform:scaleX(-1); }
+
+@keyframes moveAcross {
+  0% { left:-400px; }
+  100% { left:calc(50% - 120px); }
+}
+@keyframes floatUp {
+  from { transform: scaleX(-1) translateY(0); }
+  to { transform: scaleX(-1) translateY(-10px); }
+}
+
+#message {
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+
+.love-item {
+  position:absolute;
+  opacity:0;
+  text-align:center;
+  transition: opacity 1s ease;
+  word-break: break-word;
+}
+.love-item img {
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:10px;
+}
+.love-item .text {
+  position:absolute;
+  bottom:100%;
+  left:50%;
+  transform:translateX(-50%);
+  color:#ff0066;
+  font-weight:600;
+  width:90%;
+  font-size: clamp(12px, 3vw, 18px);
+  word-wrap:break-word;
+}
+
+/* Mobile */
+@media(max-width:768px){
+  .thought-cloud { width:50vw; height:20vh; }
+  #dog { width:40vw; }
+}
+</style>
+</head>
+<body>
+
+<div class="dog-group" id="dogGroup">
+  <div class="thought-cloud">
+    <div class="thought-text">
+      Dịch vụ gửi thư yêu thương 💖 <br>💌
+    </div>
+  </div>
+  <img id="dog" src="style/image/ship.gif" alt="chó dễ thương">
+</div>
+
+<div id="message"></div>
+<audio id="sound" src="style/sound/love.mp3"></audio>
+
+<script>
+const dogGroup = document.getElementById("dogGroup");
+const message = document.getElementById("message");
+const sound = document.getElementById("sound");
+
+const loveTexts = [
+  "💖 Gặp cậu là điều tuyệt vời nhất hôm nay!",
+  "💌 Nhìn cậu thôi cũng thấy tim mình rung rinh!",
+  "🌸 Chúc cậu ngày 20/10 tràn đầy nụ cười và ngọt ngào như cậu vậy!",
+  "💘 Ai đó đáng yêu như cậu phải được cưng chiều hết nấc!",
+  "🌷 Một ngày xinh đẹp, một trái tim rung rinh 💕",
+  "💝 Cậu khiến mọi thứ xung quanh trở nên đáng yêu hơn!",
+  "💫 Nếu cậu cười, cả thế giới mình cũng muốn cười theo!"
+];
+
+let loveImages = [
+  "./style/image/chuc1.jpg",
+  "./style/image/chuc2.jpg",
+  "./style/image/chuc3.jpg",
+  "./style/image/chuc4.jpg",
+  "./style/image/chuc5.jpg",
+  "./style/image/chuc6.jpg",
+];
+
+dogGroup.addEventListener("animationend", () => {
+  dogGroup.style.display = "none";
+  sound.currentTime = 0;
+  sound.play();
+
+  // Shuffle ảnh để không trùng
+  loveImages = loveImages.sort(() => Math.random() - 0.5);
+
+  loveImages.forEach((imgSrc, index) => {
+    setTimeout(() => {
+      const item = document.createElement("div");
+      item.className = "love-item";
+
+      const img = document.createElement("img");
+      img.src = imgSrc;
+      const size = Math.min(100 + Math.random()*50, 200);
+      img.style.width = size + "px";
+      img.style.height = "auto";
+      item.appendChild(img);
+
+      const text = document.createElement("div");
+      text.className = "text";
+      text.innerText = loveTexts[Math.floor(Math.random()*loveTexts.length)];
+      item.appendChild(text);
+
+      // Chọn vị trí ngẫu nhiên nhưng trong màn hình, tránh bị tràn
+      const maxX = window.innerWidth - size;
+      const maxY = window.innerHeight - size;
+      item.style.left = Math.random() * maxX + "px";
+      item.style.top = Math.random() * maxY + "px";
+
+      message.appendChild(item);
+      requestAnimationFrame(() => item.style.opacity = 1);
+    }, index * 500); // hiển thị lần lượt 0.5s
+  });
+});
+</script>
+</body>
+</html>
