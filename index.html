@@ -38,29 +38,26 @@ body {
   align-items:center;
   justify-content:center;
   animation: floatUp 1.5s ease-in-out infinite alternate;
-  transform: scaleX(-1);
 }
 .thought-text {
-  position: relative; /* nằm trong đám mây */
-  transform: scaleX(-1);
+  position: relative;
   text-align: center;
   font-weight:600;
   color:#ff4fa3;
   width:90%;
-  max-width:260px;
   word-wrap: break-word;
   font-size: clamp(12px,4vw,18px);
 }
 
-#dog { width:240px; max-width:24vw; transform:scaleX(-1); }
+#dog { width:240px; max-width:24vw;transform:scaleX(-1); }
 
 @keyframes moveAcross {
   0% { left:-400px; }
   100% { left:calc(50% - 120px); }
 }
 @keyframes floatUp {
-  from { transform: scaleX(-1) translateY(0); }
-  to { transform: scaleX(-1) translateY(-10px); }
+  from { transform: translateY(0); }
+  to { transform: translateY(-10px); }
 }
 
 /* 💘 Lời chúc full màn hình */
@@ -83,14 +80,21 @@ body {
   opacity:0;
   text-align:center;
   margin:10px;
-  transition: opacity 1s ease;
   display:flex;
   flex-direction: column;
   align-items: center;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  will-change: opacity, transform;
+}
+.love-item.show {
+  opacity:1;
+  transform: scale(1);
 }
 .love-item img {
   display:block;
-  width:100%;
+  max-width:200px;
+  max-height:150px;
+  width:auto;
   height:auto;
   border-radius:10px;
 }
@@ -107,6 +111,7 @@ body {
 @media(max-width:768px){
   .thought-cloud { width:50vw; height:20vh; }
   #dog { width:40vw; }
+  .love-item img { max-width:30vw; max-height:30vw; }
 }
 </style>
 </head>
@@ -155,29 +160,29 @@ dogGroup.addEventListener("animationend", () => {
   sound.currentTime = 0;
   sound.play();
 
-  // Shuffle để hiển thị ảnh ngẫu nhiên nhưng không trùng
+  // Shuffle ảnh để không trùng
   loveImages = loveImages.sort(()=>Math.random()-0.5);
 
-  loveImages.forEach((imgSrc,index)=>{
-    setTimeout(()=>{
-      const item = document.createElement("div");
-      item.className="love-item";
+  const items = loveImages.map(imgSrc=>{
+    const item = document.createElement("div");
+    item.className="love-item";
 
-      const img = document.createElement("img");
-      img.src = imgSrc;
-      const size = Math.min(100 + Math.random()*50, 200);
-      img.style.width = size + "px";
-      img.style.height = "auto";
-      item.appendChild(img);
+    const img = document.createElement("img");
+    img.src = imgSrc;
+    item.appendChild(img);
 
-      const text = document.createElement("div");
-      text.className="text";
-      text.innerText = loveTexts[Math.floor(Math.random()*loveTexts.length)];
-      item.appendChild(text);
+    const text = document.createElement("div");
+    text.className="text";
+    text.innerText = loveTexts[Math.floor(Math.random()*loveTexts.length)];
+    item.appendChild(text);
 
-      message.appendChild(item);
-      requestAnimationFrame(()=>item.style.opacity=1);
-    }, index*500);
+    message.appendChild(item);
+    return item;
+  });
+
+  // Hiển thị lần lượt, 0.2s/lần
+  items.forEach((item,i)=>{
+    setTimeout(()=> item.classList.add("show"), i*200);
   });
 });
 </script>
